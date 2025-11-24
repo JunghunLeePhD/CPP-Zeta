@@ -5,6 +5,7 @@ APP_SRC  = src/main.cpp
 
 LIB_SRCS = lib/Theta.cpp \
 		   lib/HardyZ.cpp \
+		   lib/Bernoulli.cpp \
 
 SRCS = $(APP_SRC) $(LIB_SRCS)
 
