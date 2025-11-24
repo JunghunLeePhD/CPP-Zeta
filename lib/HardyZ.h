@@ -16,6 +16,14 @@ namespace Zeta {
          * * **Use Case:** Recommended for $ t < 10,000 $ or when checking for high accuracy.
          */
         EulerMaclaurin,
+
+        /**
+         * @brief Riemann-Siegel Formula (Main Sum approximation).
+         * * **Complexity:** $ O(\sqrt{t}) $
+         * * **Precision:** Moderate (Main sum only, ignores $ \Psi $ remainders).
+         * * **Use Case:** Recommended for large $ t $ (e.g., $ t > 10^5 $).
+         */
+        RiemannSiegel
     };
 
     /**
@@ -58,6 +66,16 @@ namespace Zeta {
          * and rotates the result by $ e^{i\theta(t)} $.
          */
         static double computeEM(double t);
+
+        /**
+         * @brief Computes Z(t) using the Riemann-Siegel Main Sum.
+         * Note that it does not use $ \zeta(s) $ as the Euler-Maclaurin method did.
+         * Uses the approximation:
+         * $$
+         * Z(t) \approx 2 \sum_{n=1}^{\lfloor \sqrt{t/2\pi} \rfloor} \frac{\cos(\theta(t) - t \ln n)}{\sqrt{n}}
+         * $$
+         */
+        static double computeRS(double t);
     };
 }
 

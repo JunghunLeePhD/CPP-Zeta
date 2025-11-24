@@ -54,12 +54,36 @@ namespace Zeta {
         return (std::exp(phase) * zeta).real();
     }
 
+    double HardyZ::computeRS(double t) {
+        int N = static_cast<int>(std::floor(std::sqrt(t / (2.0 * M_PI))));
+        if (N <= 1) return 0.0;
+
+        double theta = Theta::value(t);
+
+        std::vector<int> indices(N);
+        std::iota(indices.begin(), indices.end(), 1);
+
+        double sum = std::accumulate(
+            indices.begin(), indices.end(),
+            0.0,
+            [theta, t](double current_sum, int n) {
+                double n_dbl = static_cast<double>(n);
+                double term_arg = theta - (t * std::log(n_dbl));
+                return current_sum + (std::cos(term_arg) / std::sqrt(n_dbl));
+            }
+        );
+
+        return 2.0 * sum;
+    }
+
     double HardyZ::compute(double t, Method method) {
         if (std::abs(t) < 1e-9) return -0.5;
 
         switch (method) {
             case Method::EulerMaclaurin:
                 return computeEM(t);
+            case Method::RiemannSiegel:
+                return computeRS(t);
             default:
                 return 0;
         }
