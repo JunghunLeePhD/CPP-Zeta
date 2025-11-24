@@ -2,6 +2,7 @@
 #define HARDYZ_H
 
 #include <complex>
+#include <vector>
 
 namespace Zeta {
 
@@ -23,7 +24,15 @@ namespace Zeta {
          * * **Precision:** Moderate (Main sum only, ignores $ \Psi $ remainders).
          * * **Use Case:** Recommended for large $ t $ (e.g., $ t > 10^5 $).
          */
-        RiemannSiegel
+        RiemannSiegel,
+
+        /**
+         * @brief Odlyzko-Schönhage Algorithm.
+         * * **Complexity:** $ O(t^{1/3}) $ (amortized over a block).
+         * * **Precision:** High (depends on Taylor series depth).
+         * * **Use Case:** Only efficient when computing **blocks** of zeros for extremely large $ t $ (e.g., $ t > 10^{10} $).
+         */
+        OdlyzkoSchonhage
     };
 
     /**
@@ -40,6 +49,9 @@ namespace Zeta {
      */
     class HardyZ {
     public:
+        // =============================================================
+        // Single Point Computation (EM and RS)
+        // =============================================================
         /**
          * @brief Computes the value of Z(t).
          * @param t The imaginary component of the argument $ s = \frac{1}{2} + it $.
@@ -47,6 +59,22 @@ namespace Zeta {
          * @return The real value $ Z(t) $.
          */
         static double compute(double t, Method method = Method::EulerMaclaurin);
+
+        // =============================================================
+        // Block Computation (Odlyzko-Schönhage)
+        // =============================================================
+        /**
+         * @brief Computes a range of Z values efficiently.
+         * This is the primary entry point for the Odlyzko-Schönhage method.
+         * It computes $ Z(t) $ for $ t \in [start, start + length] $.
+         * @param start_t The starting height on the critical line.
+         * @param length The length of the interval to compute.
+         * @param points The number of sampling points within the interval.
+         * @param method Algorithm (default: OdlyzkoSchonhage for efficiency).
+         * @return A vector containing the Z values.
+         */
+        static std::vector<double> computeBlock(double start_t, double length, int points, Method method = Method::OdlyzkoSchonhage);   
+
 
     private:
         /**
@@ -76,6 +104,12 @@ namespace Zeta {
          * $$
          */
         static double computeRS(double t);
+    
+        /**
+         * @brief Implementation of the rational function expansion / FFT method.
+         * * Uses the Taylor expansion of $ n^{-i\delta} $ to evaluate sums quickly.
+         */
+        static std::vector<double> computeOS(double start_t, double length, int points);
     };
 }
 

@@ -1,26 +1,32 @@
 #include <iostream>
-#include <algorithm>
-#include <vector>
-#include "Theta.h"
+#include <iomanip>
 #include "HardyZ.h"
 
 int main() {
-    int size = 500;
-    double start_value = 100000.0;
-    double step = 0.1f;
+    double t_start = 1000.0;
+    double length = 5.0;
+    int points = 6; // Evaluate 1000, 1001, ... 1005
 
-    std::vector<double> v(size);
-    std::generate(v.begin(), v.end(), [current = start_value, &step]() mutable{
-        double value = current;
-        current += step;
+    std::cout << "Comparing RS (Single) vs Odlyzko (Block)" << std::endl;
+    std::cout << "----------------------------------------" << std::endl;
 
-        double hardyZ_EM = Zeta::HardyZ::compute(value, Zeta::Method::EulerMaclaurin);
-        double hardyZ_RS = Zeta::HardyZ::compute(value, Zeta::Method::RiemannSiegel);
+    auto block_results = Zeta::HardyZ::computeBlock(
+        t_start, length, points, Zeta::Method::OdlyzkoSchonhage
+    );
 
-        std::cout << hardyZ_EM << " " << hardyZ_RS << std::endl;
+    double step = length / (points - 1);
 
-        return value;
-    });
+    for(int i = 0; i < points; ++i) {
+        double t = t_start + i * step;
+        double val_os = block_results[i];
+        double val_rs = Zeta::HardyZ::compute(t, Zeta::Method::RiemannSiegel);
+
+        std::cout << "t=" << std::fixed << std::setprecision(1) << t 
+                  << " | OS: " << std::setprecision(6) << val_os 
+                  << " | RS: " << val_rs 
+                  << " | Diff: " << std::scientific << std::abs(val_os - val_rs) 
+                  << std::endl;
+    }
 
     return 0;
 }

@@ -4,7 +4,6 @@
 #include <cmath>
 #include <vector>
 #include <iostream>
-#include <numeric>
 #include <execution> 
 
 #ifndef M_PI
@@ -80,6 +79,55 @@ namespace Zeta {
         return 2.0 * sum;
     }
 
+    std::vector<double> HardyZ::computeOS(double start_t, double length, int points) {
+        std::vector<double> results;
+        results.reserve(points);
+
+        int N = static_cast<int>(std::floor(std::sqrt(start_t / (2.0 * M_PI))));
+        if (N < 1) N = 1;
+
+        std::vector<std::complex<double>> base_terms(N + 1);
+        
+        for (int n = 1; n <= N; ++n) {
+            double ln_n = std::log(static_cast<double>(n));
+            double mag = 1.0 / std::sqrt(static_cast<double>(n));
+            double phase = -start_t * ln_n;
+            
+            base_terms[n] = std::polar(mag, phase);
+        }
+        std::vector<int> indices(N);
+        std::iota(indices.begin(), indices.end(), 1);
+
+        double step = (points > 1) ? (length / (points - 1)) : 0.0;
+
+        for (int k = 0; k < points; ++k) {
+            double delta = k * step;       
+            double t_current = start_t + delta;
+
+            double theta = Theta::value(t_current);
+            std::complex<double> rot_phase = std::polar(1.0, theta);
+
+            std::complex<double> sum = std::accumulate(
+                indices.begin(), indices.end(), 
+                std::complex<double>(0.0),
+                [delta, &base_terms](std::complex<double> current_sum, int n) { 
+                    double ln_n = std::log(static_cast<double>(n));
+                    double perturbation_phase = -delta * ln_n;
+                    
+                    std::complex<double> term = base_terms[n] * std::polar(1.0, perturbation_phase);
+
+                    return current_sum + term; 
+                }
+            );
+
+            double Z_val = 2.0 * (rot_phase * sum).real();
+            
+            results.push_back(Z_val);
+        }
+
+        return results;
+    }
+
     double HardyZ::compute(double t, Method method) {
         if (std::abs(t) < 1e-9) return -0.5;
 
@@ -91,5 +139,23 @@ namespace Zeta {
             default:
                 return 0;
         }
+    }
+
+    std::vector<double> HardyZ::computeBlock(double start_t, double length, int points, Method method) {
+        if (method == Method::OdlyzkoSchonhage) {
+            return computeOS(start_t, length, points);
+        }
+
+        std::vector<double> results;
+        results.reserve(points);
+
+        double step = (points > 1) ? (length / (points - 1)) : 0.0;
+        
+        for (int i = 0; i < points; ++i) {
+            double t = start_t + (i * step);
+            results.push_back(compute(t, method));
+        }
+
+        return results;
     }
 }
