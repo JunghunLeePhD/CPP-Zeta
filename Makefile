@@ -4,6 +4,7 @@ CXXFLAGS = -O3 -std=c++17 -I./lib
 APP_SRC  = src/main.cpp
 
 LIB_SRCS = lib/Theta.cpp \
+		   lib/HardyZ.cpp \
 
 SRCS = $(APP_SRC) $(LIB_SRCS)
 

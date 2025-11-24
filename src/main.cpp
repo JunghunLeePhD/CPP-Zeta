@@ -2,9 +2,10 @@
 #include <algorithm>
 #include <vector>
 #include "Theta.h"
+#include "HardyZ.h"
 
 int main() {
-    int size = 10;
+    int size = 500;
     double start_value = 0.0;
     double step = 0.1f;
 
@@ -13,8 +14,8 @@ int main() {
         double value = current;
         current += step;
 
-        double theta = Zeta::Theta::value(value);
-        std::cout << theta << std::endl;
+        double hardyZ = Zeta::HardyZ::compute(value, Zeta::Method::EulerMaclaurin);
+        std::cout << hardyZ << std::endl;
 
         return value;
     });
