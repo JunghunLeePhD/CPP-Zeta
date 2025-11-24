@@ -3,21 +3,21 @@
 #include <vector>
 #include "Theta.h"
 #include "HardyZ.h"
+#include "Bernoulli.h"
+
 
 int main() {
-    int size = 500;
-    double start_value = 0.0;
-    double step = 0.1f;
+    int size = 10;
+    int start_value = 0;
+    int step = 1;
 
-    std::vector<double> v(size);
+    std::vector<int> v(size);
     std::generate(v.begin(), v.end(), [current = start_value, &step]() mutable{
-        double value = current;
+        int value = current;
         current += step;
+        double bernoulli = Zeta::Bernoulli::get(value);
 
-        double hardyZ_EM = Zeta::HardyZ::compute(value, Zeta::Method::EulerMaclaurin);
-        double hardyZ_RS = Zeta::HardyZ::compute(value, Zeta::Method::RiemannSiegel);
-
-        std::cout << hardyZ_EM << " " << hardyZ_RS << std::endl;
+        std::cout << value << " " << bernoulli << std::endl;
 
         return value;
     });
