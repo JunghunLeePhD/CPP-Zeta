@@ -1,5 +1,6 @@
 #include "HardyZ.h"
 #include "Theta.h"  
+#include "Bernoulli.h"
 #include <cmath>
 #include <vector>
 #include <iostream>
@@ -35,8 +36,11 @@ namespace Zeta {
         std::complex<double> term_integral = (N_dbl * N_pow_minus_s) / (s - 1.0);
         std::complex<double> term_half = 0.5 * N_pow_minus_s;
 
-        std::complex<double> term_B2 = (1.0 / 12.0) * s * (N_pow_minus_s * inv_N);
-        std::complex<double> term_B4 = (-1.0 / 720.0) * s * (s + 1.0) * (s + 2.0) * (N_pow_minus_s * inv_N * inv_N_sq);
+        double Bern2 = Zeta::Bernoulli::get(2);
+        double Bern4 = Zeta::Bernoulli::get(4);
+
+        std::complex<double> term_B2 = (Bern2 / 2.0) * (-s) * (N_pow_minus_s * inv_N);
+        std::complex<double> term_B4 = (Bern4 / 24.0) * (-s) * (-s - 1.0) * (-s - 2.0) * (N_pow_minus_s * inv_N * inv_N_sq);
 
         return sum + term_integral + term_half + term_B2 + term_B4;
     }
