@@ -14,8 +14,10 @@ int main() {
         double value = current;
         current += step;
 
-        double hardyZ = Zeta::HardyZ::compute(value, Zeta::Method::EulerMaclaurin);
-        std::cout << hardyZ << std::endl;
+        double hardyZ_EM = Zeta::HardyZ::compute(value, Zeta::Method::EulerMaclaurin);
+        double hardyZ_RS = Zeta::HardyZ::compute(value, Zeta::Method::RiemannSiegel);
+
+        std::cout << hardyZ_EM << " " << hardyZ_RS << std::endl;
 
         return value;
     });
