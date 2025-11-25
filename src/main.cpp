@@ -1,32 +1,33 @@
-#include <iostream>
-#include <iomanip>
-#include "HardyZ.h"
+#include <print>
+#include "Theta.h"
 
 int main() {
-    double t_start = 1000.0;
-    double length = 5.0;
-    int points = 6; // Evaluate 1000, 1001, ... 1005
+    std::println("--- Riemann-Siegel Theta Function Test (C++26) ---");
 
-    std::cout << "Comparing RS (Single) vs Odlyzko (Block)" << std::endl;
-    std::cout << "----------------------------------------" << std::endl;
+    // 1. Standard Runtime Test (Double)
+    double t_double = 14.13472514173469; 
+    double res_double = Zeta::theta(t_double);
+    
+    std::println("Type: Double");
+    std::println("t = {}", t_double);
+    std::println("Result = {}\n", res_double);
 
-    auto block_results = Zeta::HardyZ::computeBlock(
-        t_start, length, points, Zeta::Method::OdlyzkoSchonhage
-    );
+    // 2. Float Test (Template instantiation)
+    float t_float = 21.022040f; 
+    float res_float = Zeta::theta(t_float);
 
-    double step = length / (points - 1);
+    std::println("Type: Float");
+    std::println("t = {}", t_float);
+    std::println("Result = {}\n", res_float);
 
-    for(int i = 0; i < points; ++i) {
-        double t = t_start + i * step;
-        double val_os = block_results[i];
-        double val_rs = Zeta::HardyZ::compute(t, Zeta::Method::RiemannSiegel);
+    // 3. Constexpr Test (Compile-Time Calculation)
+    const double t_const = 10.0; 
+    const double val_const = Zeta::theta(t_const);
 
-        std::cout << "t=" << std::fixed << std::setprecision(1) << t 
-                  << " | OS: " << std::setprecision(6) << val_os 
-                  << " | RS: " << val_rs 
-                  << " | Diff: " << std::scientific << std::abs(val_os - val_rs) 
-                  << std::endl;
-    }
+    std::println("Type: Constexpr (Computed at Compile-Time)");
+    std::println("t = {}", t_const);
+    std::println("Result = {}", val_const); 
 
+    return 0;
     return 0;
 }
