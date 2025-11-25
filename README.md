@@ -3,12 +3,21 @@
 
 **CPP-Zeta** is a C++ project designed to numerically compute and visualize the zeros of the **Riemann Zeta Function** on the critical line.
 
-This repository provides an efficient C++ implementation of advanced algorithms—including the **Euler-Maclaurin**summation and the **Riemann-Siegel** formula—to evaluate the Zeta function and the **Hardy ******Z**-function**. It generates image frames visualizing the behavior of the function as t increases, which can be compiled into animations.
+This repository provides an efficient C++ implementation of advanced algorithms—including the **Euler-Maclaurin**summation and the **Riemann-Siegel** formula—to evaluate the Zeta function and the **Hardy $Z$-function**. It generates image frames visualizing the behavior of the function as t increases, which can be compiled into animations.
 
 
 ## **🎥 Demos**
 
-![Hardy $Z$-function by RS](/assets/CPP-Zeta.gif)
+![Hardy $Z$-function and $\zeta$-function](/assets/CPP-Zeta.gif)
+
+### Hardy $Z$-function with the Euler-Maclaurin method
+![Hardy $Z$-function by EM](/assets/hardyEM.gif)
+
+### Hardy $Z$-function with the Riemann-Siegel method
+![Hardy $Z$-function by RS](/assets/hardyRS.gif)
+
+### Riemann $\zeta$-function with the Euler-Maclaurin method
+![Riemann $\zeta$-function by RS](/assets/zetaEM.gif)
 
 ## **📖 Mathematical Background**
 
