@@ -1,30 +1,23 @@
-#ifndef BERNOULLI_H
-#define BERNOULLI_H
+#pragma once
 
 #include <vector>
+#include <concepts>
 
 namespace Zeta {
 
-    class Bernoulli {
-    public:
-        /**
-         * @brief Retrieves the n-th Bernoulli number B_n.
-         * * Uses a cache to store previously computed values.
-         * * Computed using the recursive formula: 
-         * $ \sum_{k=0}^n \binom{n+1}{k} B_k = 0 $
-         * That is,
-         * $ B_m = -1/(m+1) * Sum(k=0 to m-1) [ binom(m+1, k) * B_k ] $
-         * @param n The index (must be >= 0).
-         * @return The Bernoulli number as a double.
-         */
-        static double get(int n);
+    /**
+     * @brief Retrieves the n-th Bernoulli number B_n.
+     * Uses a local static cache to store previously computed values (Memoization).
+     * Formula:
+     * $$ B_m = \frac{-1}{m+1} \sum_{k=0}^{m-1} \binom{m+1}{k} B_k $$
+     * @tparam T Floating point type (float, double, long double).
+     * @param n The index (must be >= 0).
+     * @return The Bernoulli number.
+     */
+    template <std::floating_point T>
+    [[nodiscard]]
+    T bernoulli(int n);
 
-    private:
-        static std::vector<double> cache;
-        
-        static double nCr(int n, int k);
-    };
+} 
 
-}
-
-#endif
+#include "Bernoulli.tpp"
