@@ -1,45 +1,64 @@
-#include <print>
-#include <algorithm> 
-#include <ranges>
+#include <iostream>
+#include <vector>
+#include <string>
 #include "HardyZ.h"
+#include "Plotter.h"
 
-int main(){
-    std::println("==========================================");
-    std::println("   C++26 Zeta Function Library Test");
-    std::println("==========================================\n");
+int main() {
+    Color black(0,0,0);
+    Color gray(100,100,100);
+    Color white(255,255,255);
+    Color blue(170,220,255);
+    Color gold(255,215,0);
 
-    // Known 1st Zero: t = 14.13472514173469...
-    double t_zero = 14.13472514173469;
+    double start_x = 10000.0;
+    double end_x = 10100.0;  
+    int frame = 6000;      
+    int height = 300;
+    int axis_y = height / 2; // Middle of screen
 
-    std::println("    Target t = {:.14f}", t_zero);
 
-    // Method A: Euler-Maclaurin (High Precision)
-    double z_em = Zeta::Hardy::compute<double>(t_zero, Zeta::Method::EulerMaclaurin);
-    std::println("    [EM] Z(t) = {: .15f} (Expected ~0.0)", z_em);
+    std::function<double(double)> hardyEM = [](double x){
+        return Zeta::Hardy::compute(x, Zeta::Method::EulerMaclaurin);
+    };
 
-    // Method B: Riemann-Siegel (Approximation)
-    double z_rs = Zeta::Hardy::compute<double>(t_zero, Zeta::Method::RiemannSiegel);
-    std::println("    [RS] Z(t) = {: .15f} (Expected ~0.0)", z_rs);
-    std::println("");
+    std::function<double(double)> hardyRS = [](double x){
+        return Zeta::Hardy::compute(x, Zeta::Method::RiemannSiegel);
+    };
 
-    // Method C: Odlyzko-Schönhage 
-    double start_t = t_zero - 3;
-    double length = 7.0;  // Compute interval [100.0, 105.0]
-    int points = 8;       // 8 sample points
-
-    std::println("    Range: [{}, {}], Points: {}", start_t, start_t + length, points);
-
-    auto results = Zeta::Hardy::computeBlock<double>(
-        start_t, length, points, Zeta::Method::OdlyzkoSchonhage
-    );
-
-    int idx = 0;
-    double step = length / (points - 1);
+    std::function<double(double)> theta = [](double t) {
+        return Zeta::theta<double>(t);
+    }; 
     
-    for (auto [idx, val] : results | std::views::enumerate) {
-        double current_t = start_t + (static_cast<double>(idx) * step);
-        std::println("    [OS] Z(t) = {: .15f}  <-  t = {:.14f}", val, current_t);
-    }
+    system("mkdir -p output/frames_hardyEM");
+    PlotCanvas(600, height)
+        .fill_background(black)
+        .draw_baseline(axis_y, gray)
+        .animate_function("output/frames_hardyEM", hardyEM, start_x, end_x, frame, blue, gold);
 
-    return 0;
-} 
+
+    system("mkdir -p output/frames_hardyRS");
+    PlotCanvas(600, height)
+        .fill_background(black)
+        .draw_baseline(axis_y, gray) 
+        .animate_function("output/frames_hardyRS", hardyRS, start_x, end_x, frame, blue, gold);
+
+
+    system("mkdir -p output/frames_zeta");
+    PlotCanvas(600, 600).fill_background(black)
+          .animate_complex_zeta(
+              "output/frames_zeta",
+              hardyEM, 
+              theta,
+              start_x, 
+              end_x, 
+              frame, 
+              blue,
+              gold
+          );
+
+    std::cout << "All tasks completed. \nTo create the video, run:" << std::endl;
+    std::cout << "ffmpeg -framerate 300 -i output/frames_hardyEM/frame_%04d.ppm -c:v libx264 -pix_fmt yuv420p output/hardyEM.mp4" << std::endl;
+    std::cout << "ffmpeg -framerate 300 -i output/frames_hardyRS/frame_%04d.ppm -c:v libx264 -pix_fmt yuv420p output/hardyRS.mp4" << std::endl;
+    std::cout << "ffmpeg -framerate 300 -i output/frames_zeta/frame_%04d.ppm -c:v libx264 -pix_fmt yuv420p output/zeta.mp4" << std::endl;
+};
