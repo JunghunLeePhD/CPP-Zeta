@@ -3,7 +3,7 @@ CXXFLAGS = -O3 -std=c++26 -I./lib
 
 APP_SRC  = src/main.cpp
 
-# LIB_SRCS = 
+LIB_SRCS = lib/Plotter.cpp \
 
 SRCS = $(APP_SRC) $(LIB_SRCS)
 
