@@ -1,5 +1,5 @@
 CXX      = g++
-CXXFLAGS = -O3 -std=c++17 -I./lib
+CXXFLAGS = -O3 -std=c++26 -I./lib
 
 APP_SRC  = src/main.cpp
 
