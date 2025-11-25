@@ -3,9 +3,8 @@ CXXFLAGS = -O3 -std=c++26 -I./lib
 
 APP_SRC  = src/main.cpp
 
-LIB_SRCS = lib/Theta.cpp \
-		   lib/HardyZ.cpp \
-		   lib/Bernoulli.cpp \
+# LIB_SRCS = lib/HardyZ.cpp \
+# 		   lib/Bernoulli.cpp \
 
 SRCS = $(APP_SRC) $(LIB_SRCS)
 
